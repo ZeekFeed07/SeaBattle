@@ -4,13 +4,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/PlayerController.h"
+#include "GameFramework/Actor.h"
 /*XXXXXXXXXXXXXXXXXXXXX Include above XXXXXXXXXXXXXXXXXXXXXXXXX*/
-#include "DefaultPlayerController.generated.h"
+#include "SeaFieldCell.generated.h"
 
 UCLASS()
-class SEABATTLE_API ADefaultPlayerController : public APlayerController
+class SEABATTLE_API ASeaFieldCell : public AActor
 {
 	GENERATED_BODY()
 	
+public:	
+	ASeaFieldCell();
+
+protected:
+	virtual void BeginPlay() override;
+
+public:
+	virtual void Tick(float DeltaTime) override;
+
 };
