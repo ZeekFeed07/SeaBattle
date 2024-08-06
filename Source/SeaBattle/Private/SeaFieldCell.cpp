@@ -21,3 +21,7 @@ void ASeaFieldCell::Tick(float DeltaTime)
 
 }
 
+FVector ASeaFieldCell::GetSize() const
+{
+	return _Size;
+}
