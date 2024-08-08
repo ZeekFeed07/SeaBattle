@@ -19,7 +19,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	FVector _Size;
 public:
 	virtual void Tick(float DeltaTime) override;
 
+
+	FVector GetSize() const;
 };
