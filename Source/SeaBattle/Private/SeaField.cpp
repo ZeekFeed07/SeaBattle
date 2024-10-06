@@ -67,7 +67,7 @@ void ASeaField::InitField()
 
 void ASeaField::ClearField()
 {
-	UE_LOG(LogSeaField, Error, TEXT("%d"), _Field.Num())
+	UE_LOG(LogSeaField, Display, TEXT("%d"), _Field.Num())
 
 	for (int32 i = 0; i < _Field.Num(); ++i)
 	{
@@ -79,6 +79,14 @@ void ASeaField::ClearField()
 	}
 	_Field.Empty();
 
-	UE_LOG(LogSeaField, Error, TEXT("%d"), _Field.Num())
+	UE_LOG(LogSeaField, Display, TEXT("%d"), _Field.Num())
+}
+
+void ASeaField::AddShip(AShip* ShipPtr, int32 Place_i, int32 Place_j, int32 dir_i, int32 dir_j)
+{
+}
+
+void ASeaField::CheckPlacement(int32 ShipSize, int32 Place_i, int32 Place_j, int32 dir_i, int32 dir_j)
+{
 }
 

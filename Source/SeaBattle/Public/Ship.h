@@ -21,4 +21,12 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable)
+	virtual int32 GetShipSize() const;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void SetShipSize(int32 NewSize = 1);
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ship Properties", meta = (ExposeOnSpawn = true))
+	int32 _Size = 1;
 };

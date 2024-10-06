@@ -6,6 +6,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "SeaFieldCell.h"
+#include "Ship.h"
 /*XXXXXXXXXXXXXXXXXXXXX Include above XXXXXXXXXXXXXXXXXXXXXXXXX*/
 #include "SeaField.generated.h"
 
@@ -51,5 +52,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, CallInEditor, Category = "Main Settings")
 	virtual void ClearField();
+
+	void AddShip(AShip* ShipPtr, int32 Place_i, int32 Place_j, int32 dir_i, int32 dir_j);
+
+	void CheckPlacement(int32 ShipSize, int32 Place_i, int32 Place_j, int32 dir_i, int32 dir_j);
 };
 	

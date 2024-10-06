@@ -21,3 +21,13 @@ void AShip::Tick(float DeltaTime)
 
 }
 
+int32 AShip::GetShipSize() const
+{
+	return _Size;
+}
+
+void AShip::SetShipSize(int32 NewSize)
+{
+	_Size = NewSize;
+}
+
