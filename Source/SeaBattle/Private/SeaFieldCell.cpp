@@ -21,6 +21,16 @@ void ASeaFieldCell::Tick(float DeltaTime)
 
 }
 
+void ASeaFieldCell::SetCoord(FIntPoint NewCoord)
+{
+	_Coord = NewCoord;
+}
+
+FIntPoint ASeaFieldCell::GetCoord() const
+{
+	return _Coord;
+}
+
 FVector ASeaFieldCell::GetSize() const
 {
 	return _Size;

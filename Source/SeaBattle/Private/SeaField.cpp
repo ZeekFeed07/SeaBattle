@@ -50,6 +50,7 @@ void ASeaField::InitField()
 	FVector FieldSize = FVector( (CellSize.X + CellGap) * LengthX - CellGap, (CellSize.Y + CellGap) * LengthY - CellGap, CellSize.Z);
 	FVector FieldHalfSize = FieldSize / 2;
 	FVector CellHalfSize = FVector(CellSize.X / 2, CellSize.Y / 2, CellSize.Z / 2);
+	FVector FieldPos = GetActorLocation();
 
 	_Field.SetNum(LengthX);
 	for (int32 i = 0; i < LengthX; ++i)
@@ -57,10 +58,11 @@ void ASeaField::InitField()
 		_Field[i].SetNum(LengthY);
 		for (int32 j = 0; j < LengthY; ++j)
 		{
-			FVector PlaceLocation = FVector(i * (CellSize.X + CellGap) - CellGap, j * (CellSize.Y + CellGap) - CellGap, CellSize.Z) + CellHalfSize - FieldHalfSize + CellGap;
+			FVector PlaceLocation = FVector(i * (CellSize.X + CellGap) - CellGap, j * (CellSize.Y + CellGap) - CellGap, CellSize.Z) + CellHalfSize - FieldHalfSize + CellGap + FieldPos;
 			FRotator Rotator = FRotator(0, 0, 0);
 
 			_Field[i][j] = World->SpawnActor<ASeaFieldCell>(CellClass, PlaceLocation, Rotator);
+			_Field[i][j]->SetCoord(FIntPoint(i, j));
 		}
 	}
 }
@@ -82,11 +84,45 @@ void ASeaField::ClearField()
 	UE_LOG(LogSeaField, Display, TEXT("%d"), _Field.Num())
 }
 
-void ASeaField::AddShip(AShip* ShipPtr, int32 Place_i, int32 Place_j, int32 dir_i, int32 dir_j)
+bool ASeaField::CheckPlace(AShip* ShipPtr, FIntPoint Place, EShipirection Direction)
+{
+	int32 ShipSize = ShipPtr->GetShipSize();
+	
+	int32 PlaceX = Place.X;
+	int32 PlaceY = Place.Y;
+
+	FIntPoint Dir = DirToPoint(Direction);
+	int32 DirX = Dir.X;
+	int32 DirY = Dir.Y;
+
+	bool expr1 = ( (PlaceX + DirX * ShipSize) <    _Field.Num() ) && ( (PlaceX + DirX * ShipSize) >= 0 );
+	bool expr2 = ( (PlaceY + DirY * ShipSize) < _Field[0].Num() ) && ( (PlaceY + DirY * ShipSize) >= 0 );
+
+	return expr1 && expr2;
+}
+
+void ASeaField::AddShip(AShip* ShipPtr, FIntPoint Place, EShipirection Direction)
 {
 }
 
-void ASeaField::CheckPlacement(int32 ShipSize, int32 Place_i, int32 Place_j, int32 dir_i, int32 dir_j)
+FIntPoint ASeaField::DirToPoint(EShipirection Dir)
 {
+	switch (Dir)
+	{
+	case EShipirection::LEFT:
+		return FIntPoint(0, -1);
+		break;
+	case EShipirection::BOTTOM:
+		return FIntPoint(-1, 0);
+		break;
+	case EShipirection::RIGHT:
+		return FIntPoint(0, 1);
+		break;
+	case EShipirection::TOP:
+		return FIntPoint(1, 0);
+		break;
+	default:
+		return FIntPoint(999, 999);
+		break;
+	}
 }
-

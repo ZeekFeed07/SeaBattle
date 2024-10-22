@@ -20,9 +20,17 @@ protected:
 	virtual void BeginPlay() override;
 
 	FVector _Size;
+
+	FIntPoint _Coord;
+
 public:
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable)
+	void SetCoord(FIntPoint NewCoord);
+
+	UFUNCTION(BlueprintCallable)
+	FIntPoint GetCoord() const;
 
 	FVector GetSize() const;
 };

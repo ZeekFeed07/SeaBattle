@@ -12,6 +12,15 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(LogSeaField, All, All)
 
+UENUM(BlueprintType)
+enum class EShipirection : uint8
+{
+	LEFT,
+	BOTTOM,
+	RIGHT,
+	TOP
+};
+
 UCLASS()
 class SEABATTLE_API ASeaField : public APawn
 {
@@ -27,19 +36,19 @@ protected:
 
 public:	
 
-	UPROPERTY(EditAnywhere, Category = "Main Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Main Settings")
 	int32 LengthX = 10;
 
-	UPROPERTY(EditAnywhere, Category = "Main Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Main Settings")
 	int32 LengthY = 10;
 
-	UPROPERTY(EditAnywhere, Category = "Main Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Main Settings")
 	float CellGap = 30.f;
 	
-	UPROPERTY(EditAnywhere, Category = "Main Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Main Settings")
 	FVector CellSize = FVector(500.f, 500.f, 100.f);
 
-	UPROPERTY(EditAnywhere, Category = "Main Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Main Settings")
 	TSubclassOf<ASeaFieldCell> CellClass;
 
 
@@ -53,8 +62,13 @@ public:
 	UFUNCTION(BlueprintCallable, CallInEditor, Category = "Main Settings")
 	virtual void ClearField();
 
-	void AddShip(AShip* ShipPtr, int32 Place_i, int32 Place_j, int32 dir_i, int32 dir_j);
+	UFUNCTION(BlueprintCallable)
+	bool CheckPlace(AShip* ShipPtr, FIntPoint Place, EShipirection Direction);
 
-	void CheckPlacement(int32 ShipSize, int32 Place_i, int32 Place_j, int32 dir_i, int32 dir_j);
+	UFUNCTION(BlueprintCallable)
+	void AddShip(AShip* ShipPtr, FIntPoint Place, EShipirection Direction);
+
+private:
+	FIntPoint DirToPoint(EShipirection Dir);
 };
 	
