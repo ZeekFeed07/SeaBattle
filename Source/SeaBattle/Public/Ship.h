@@ -7,6 +7,15 @@
 #include "GameFramework/Actor.h"
 #include "Ship.generated.h"
 
+UENUM(BlueprintType)
+enum class EShipirection : uint8
+{
+	LEFT,
+	BOTTOM,
+	RIGHT,
+	TOP
+};
+
 UCLASS()
 class SEABATTLE_API AShip : public AActor
 {
@@ -26,7 +35,16 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual void SetShipSize(int32 NewSize = 1);
+
+	UFUNCTION(BlueprintCallable)
+	virtual EShipirection GetDirection() const;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void SetDirection(EShipirection NewDirection = EShipirection::RIGHT);
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ship Properties", meta = (ExposeOnSpawn = true))
 	int32 _Size = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ship Properties", meta = (ExposeOnSpawn = true))
+	EShipirection _Direction = EShipirection::RIGHT;
 };

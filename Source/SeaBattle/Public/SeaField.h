@@ -12,15 +12,6 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(LogSeaField, All, All)
 
-UENUM(BlueprintType)
-enum class EShipirection : uint8
-{
-	LEFT,
-	BOTTOM,
-	RIGHT,
-	TOP
-};
-
 UCLASS()
 class SEABATTLE_API ASeaField : public APawn
 {
@@ -51,7 +42,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Main Settings")
 	TSubclassOf<ASeaFieldCell> CellClass;
 
-
+	/* ===================================== Functions ===================================== */
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -63,12 +54,18 @@ public:
 	virtual void ClearField();
 
 	UFUNCTION(BlueprintCallable)
-	bool CheckPlace(AShip* ShipPtr, FIntPoint Place, EShipirection Direction);
+	bool CheckPlace(AShip* ShipPtr, FIntPoint PlacePoint, EShipirection Direction) const;
 
 	UFUNCTION(BlueprintCallable)
-	void AddShip(AShip* ShipPtr, FIntPoint Place, EShipirection Direction);
+	bool CheckPointInField(FIntPoint PointToCheck) const;
+
+	UFUNCTION(BlueprintCallable)
+	bool AddShip(AShip* ShipPtr, FIntPoint PlacePoint, EShipirection Direction);
+
+	UFUNCTION(BlueprintCallable)
+	ASeaFieldCell* GetCellByCoord(FIntPoint Coord);
 
 private:
-	FIntPoint DirToPoint(EShipirection Dir);
+	FIntPoint DirToPoint(EShipirection Dir) const; 
 };
 	

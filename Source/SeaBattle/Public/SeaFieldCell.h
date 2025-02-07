@@ -19,10 +19,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	FVector _Size;
-
-	FIntPoint _Coord;
-
 public:
 	virtual void Tick(float DeltaTime) override;
 
@@ -32,5 +28,28 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FIntPoint GetCoord() const;
 
+	UFUNCTION(BlueprintCallable)
+	void SetAvialable(bool NewAvialibility);
+
+	UFUNCTION(BlueprintCallable)
+	bool GetAvialable() const;
+
+	UFUNCTION(BlueprintCallable)
+	void SetHasShip(bool Value);
+
+	UFUNCTION(BlueprintCallable)
+	bool GetHasShip() const;
+
+	UFUNCTION(BlueprintCallable)
 	FVector GetSize() const;
+
+protected:
+
+	FVector _Size;
+
+	FIntPoint _Coord = FIntPoint(0, 0);
+
+	bool _bAvialable = true;
+
+	bool _bHasShip = false;
 };

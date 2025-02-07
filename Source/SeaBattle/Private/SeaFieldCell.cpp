@@ -31,6 +31,26 @@ FIntPoint ASeaFieldCell::GetCoord() const
 	return _Coord;
 }
 
+void ASeaFieldCell::SetAvialable(bool NewAvialibility)
+{
+	_bAvialable = NewAvialibility;
+}
+
+bool ASeaFieldCell::GetAvialable() const
+{
+	return _bAvialable;
+}
+
+void ASeaFieldCell::SetHasShip(bool Value)
+{
+	_bHasShip = Value;
+}
+
+bool ASeaFieldCell::GetHasShip() const
+{
+	return _bHasShip;
+}
+
 FVector ASeaFieldCell::GetSize() const
 {
 	return _Size;

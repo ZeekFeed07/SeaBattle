@@ -29,7 +29,7 @@ void ASeaField::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
-
+// move the code for visualization to BP class
 void ASeaField::InitField()
 {
 	UWorld* World = GetWorld();
@@ -84,30 +84,120 @@ void ASeaField::ClearField()
 	UE_LOG(LogSeaField, Display, TEXT("%d"), _Field.Num())
 }
 
-bool ASeaField::CheckPlace(AShip* ShipPtr, FIntPoint Place, EShipirection Direction)
+/*bool ASeaField::CheckPlace(AShip* ShipPtr, FIntPoint Place, EShipirection Direction) const
 {
-	int32 ShipSize = ShipPtr->GetShipSize();
-	
-	int32 PlaceX = Place.X;
-	int32 PlaceY = Place.Y;
+	if (!ShipPtr)
+	{
+		UE_LOG(LogSeaField, Error, TEXT("Ship pointer is incorrect. (SeaField.cpp | ASeaField::CheckPlace)"))
+		return false;
+	}
+	int32 ShipSize = ShipPtr->GetShipSize() - 1;
+	//int32 PlaceX = Place.X;
+	//int32 PlaceY = Place.Y;
 
 	FIntPoint Dir = DirToPoint(Direction);
-	int32 DirX = Dir.X;
-	int32 DirY = Dir.Y;
+	//int32 DirX = Dir.X;
+	//int32 DirY = Dir.Y;
 
-	bool expr1 = ( (PlaceX + DirX * ShipSize) <    _Field.Num() ) && ( (PlaceX + DirX * ShipSize) >= 0 );
-	bool expr2 = ( (PlaceY + DirY * ShipSize) < _Field[0].Num() ) && ( (PlaceY + DirY * ShipSize) >= 0 );
+	//bool expr1 = ( (PlaceX + DirX * ShipSize) <    _Field.Num() ) && ( (PlaceX + DirX * ShipSize) >= 0 );
+	//bool expr2 = ( (PlaceY + DirY * ShipSize) < _Field[0].Num() ) && ( (PlaceY + DirY * ShipSize) >= 0 );
+
+	//return expr1 && expr2;
+	
+	return CheckPointInField(Place + Dir * ShipSize);
+
+}*/
+
+
+bool ASeaField::CheckPlace(AShip* ShipPtr, FIntPoint PlacePoint, EShipirection Direction) const
+{
+	if (!ShipPtr)
+	{
+		UE_LOG(LogSeaField, Error, TEXT("Ship pointer is incorrect. (SeaField.cpp | ASeaField::CheckPlace)"))
+		return false;
+	}
+	int32 StretchSize = ShipPtr->GetShipSize() - 1;
+	FIntPoint Dir = DirToPoint(Direction);
+
+	// Checking if ship in range 
+	if (!CheckPointInField(PlacePoint + Dir * StretchSize)) return false;
+	// Check cell avialability for placing 
+	for (int32 i = 0; i < ShipPtr->GetShipSize(); ++i)
+	{
+		if (!_Field[PlacePoint.X + Dir.X * i][PlacePoint.Y + Dir.Y * i]->GetAvialable()) return false;
+	}
+	return true;
+}
+
+bool ASeaField::CheckPointInField(FIntPoint PointToCheck) const
+{
+	// Check Field size
+	if ((_Field.Num() < 0) && (_Field[0].Num() < 0))
+	{
+		UE_LOG(LogSeaField, Error, TEXT("Field is empty. (SeaField.cpp | ASeaField::CheckPointInField)"))
+		return false;
+	}
+
+	bool expr1 = (PointToCheck.X >= 0) && (PointToCheck.Y >= 0);
+	bool expr2 = (PointToCheck.X < _Field.Num()) && (PointToCheck.Y < _Field[0].Num());
 
 	return expr1 && expr2;
 }
 
-void ASeaField::AddShip(AShip* ShipPtr, FIntPoint Place, EShipirection Direction)
+bool ASeaField::AddShip(AShip* ShipPtr, FIntPoint PlacePoint, EShipirection Direction)
 {
+	if (!ShipPtr)
+	{
+		UE_LOG(LogSeaField, Error, TEXT("Ship pointer is incorrect. (SeaField.cpp | ASeaField::AddShip)"))
+		return false;
+	}
+
+	if (CheckPlace(ShipPtr, PlacePoint, Direction))
+	{
+		bool flag = ((Direction == EShipirection::LEFT) || (Direction == EShipirection::RIGHT));
+
+		int32 X = flag ? 2 : ShipPtr->GetShipSize() + 1;
+		int32 Y = flag ? ShipPtr->GetShipSize() + 1 : 2;
+
+		for (int32 ix = PlacePoint.X - 1; ix < PlacePoint.X + X; ++ix)
+		{
+			for (int32 jy = PlacePoint.Y - 1; jy < PlacePoint.Y + Y; ++jy)
+			{
+				if (ix >= 0 && jy >= 0 && ix < LengthX && jy < LengthY)
+				{
+					_Field[ix][jy]->SetAvialable(false);
+				}
+			}
+		}
+			
+		FIntPoint DirId = DirToPoint(Direction);
+		for (int32 i = 0; i < ShipPtr->GetShipSize(); ++i)
+		{
+			_Field[PlacePoint.X + i * DirId.X][PlacePoint.Y + i * DirId.Y]->SetHasShip(true);
+		}
+		return true;
+	}
+
+	return false;
 }
 
-FIntPoint ASeaField::DirToPoint(EShipirection Dir)
+
+ASeaFieldCell* ASeaField::GetCellByCoord(FIntPoint Coord)
 {
-	switch (Dir)
+	if (Coord.X >= 0 && Coord.Y >= 0 && Coord.X < LengthX && Coord.Y < LengthY)
+	{
+		return _Field[Coord.X][Coord.Y];
+	}
+	else
+	{
+		UE_LOG(LogSeaField, Error, TEXT("Coordinated out of field bounds. (SeaField.cpp | ASeaField::GetCellByCoord)"))
+		return nullptr;
+	}
+}
+
+FIntPoint ASeaField::DirToPoint(EShipirection Dir) const
+{	
+	switch (Dir)	
 	{
 	case EShipirection::LEFT:
 		return FIntPoint(0, -1);
