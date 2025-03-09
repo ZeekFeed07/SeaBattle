@@ -31,12 +31,12 @@ void AShip::SetShipSize(int32 NewSize)
 	_Size = NewSize;
 }
 
-EShipirection AShip::GetDirection() const
+EShipDirection AShip::GetDirection() const
 {
 	return _Direction;
 }
 
-void AShip::SetDirection(EShipirection NewDirection)
+void AShip::SetDirection(EShipDirection NewDirection)
 {
 	_Direction = NewDirection;
 }

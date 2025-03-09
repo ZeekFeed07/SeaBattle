@@ -8,7 +8,7 @@
 #include "Ship.generated.h"
 
 UENUM(BlueprintType)
-enum class EShipirection : uint8
+enum class EShipDirection : uint8
 {
 	LEFT,
 	BOTTOM,
@@ -37,14 +37,14 @@ public:
 	virtual void SetShipSize(int32 NewSize = 1);
 
 	UFUNCTION(BlueprintCallable)
-	virtual EShipirection GetDirection() const;
+	virtual EShipDirection GetDirection() const;
 
 	UFUNCTION(BlueprintCallable)
-	virtual void SetDirection(EShipirection NewDirection = EShipirection::RIGHT);
+	virtual void SetDirection(EShipDirection NewDirection = EShipDirection::RIGHT);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ship Properties", meta = (ExposeOnSpawn = true))
 	int32 _Size = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ship Properties", meta = (ExposeOnSpawn = true))
-	EShipirection _Direction = EShipirection::RIGHT;
+	EShipDirection _Direction = EShipDirection::RIGHT;
 };

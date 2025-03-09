@@ -109,7 +109,7 @@ void ASeaField::ClearField()
 }*/
 
 
-bool ASeaField::CheckPlace(AShip* ShipPtr, FIntPoint PlacePoint, EShipirection Direction) const
+bool ASeaField::CheckPlace(AShip* ShipPtr, FIntPoint PlacePoint, EShipDirection Direction) const
 {
 	if (!ShipPtr)
 	{
@@ -144,7 +144,7 @@ bool ASeaField::CheckPointInField(FIntPoint PointToCheck) const
 	return expr1 && expr2;
 }
 
-bool ASeaField::AddShip(AShip* ShipPtr, FIntPoint PlacePoint, EShipirection Direction)
+bool ASeaField::AddShip(AShip* ShipPtr, FIntPoint PlacePoint, EShipDirection Direction)
 {
 	if (!ShipPtr)
 	{
@@ -154,7 +154,7 @@ bool ASeaField::AddShip(AShip* ShipPtr, FIntPoint PlacePoint, EShipirection Dire
 
 	if (CheckPlace(ShipPtr, PlacePoint, Direction))
 	{
-		bool flag = ((Direction == EShipirection::LEFT) || (Direction == EShipirection::RIGHT));
+		bool flag = ((Direction == EShipDirection::LEFT) || (Direction == EShipDirection::RIGHT));
 
 		int32 X = flag ? 2 : ShipPtr->GetShipSize() + 1;
 		int32 Y = flag ? ShipPtr->GetShipSize() + 1 : 2;
@@ -169,6 +169,8 @@ bool ASeaField::AddShip(AShip* ShipPtr, FIntPoint PlacePoint, EShipirection Dire
 				}
 			}
 		}
+
+		_ShipsList.Push(ShipPtr);
 			
 		FIntPoint DirId = DirToPoint(Direction);
 		for (int32 i = 0; i < ShipPtr->GetShipSize(); ++i)
@@ -195,20 +197,20 @@ ASeaFieldCell* ASeaField::GetCellByCoord(FIntPoint Coord)
 	}
 }
 
-FIntPoint ASeaField::DirToPoint(EShipirection Dir) const
+FIntPoint ASeaField::DirToPoint(EShipDirection Dir) const
 {	
 	switch (Dir)	
 	{
-	case EShipirection::LEFT:
+	case EShipDirection::LEFT:
 		return FIntPoint(0, -1);
 		break;
-	case EShipirection::BOTTOM:
+	case EShipDirection::BOTTOM:
 		return FIntPoint(-1, 0);
 		break;
-	case EShipirection::RIGHT:
+	case EShipDirection::RIGHT:
 		return FIntPoint(0, 1);
 		break;
-	case EShipirection::TOP:
+	case EShipDirection::TOP:
 		return FIntPoint(1, 0);
 		break;
 	default:

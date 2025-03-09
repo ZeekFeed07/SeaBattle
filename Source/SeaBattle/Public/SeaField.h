@@ -25,6 +25,8 @@ protected:
 
 	TArray<TArray<ASeaFieldCell*>> _Field;
 
+	TArray<AShip*> _ShipsList = TArray<AShip*>();
+
 public:	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Main Settings")
@@ -54,18 +56,25 @@ public:
 	virtual void ClearField();
 
 	UFUNCTION(BlueprintCallable)
-	bool CheckPlace(AShip* ShipPtr, FIntPoint PlacePoint, EShipirection Direction) const;
+	bool CheckPlace(AShip* ShipPtr, FIntPoint PlacePoint, EShipDirection Direction) const;
 
 	UFUNCTION(BlueprintCallable)
 	bool CheckPointInField(FIntPoint PointToCheck) const;
 
 	UFUNCTION(BlueprintCallable)
-	bool AddShip(AShip* ShipPtr, FIntPoint PlacePoint, EShipirection Direction);
+	bool AddShip(AShip* ShipPtr, FIntPoint PlacePoint, EShipDirection Direction);
 
 	UFUNCTION(BlueprintCallable)
 	ASeaFieldCell* GetCellByCoord(FIntPoint Coord);
 
+	UFUNCTION(BlueprintCallable)
+	TArray<AShip*> GetShipList()
+	{
+		return _ShipsList;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	FIntPoint DirToPoint(EShipDirection Dir) const;
 private:
-	FIntPoint DirToPoint(EShipirection Dir) const; 
 };
 	
