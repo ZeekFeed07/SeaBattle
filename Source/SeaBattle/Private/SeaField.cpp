@@ -130,7 +130,7 @@ bool ASeaField::RemoveShip(AShip* ShipToRemove)
 		return false;
 	}
 
-	FIntPoint Position = *ShipMap.FindKey(ShipToRemove);
+	FIntPoint Position = GetShipPoint(ShipToRemove);
 
 	int32 ShipLength = UMainFunctionLibrary::ShipLengthToNum(ShipToRemove->GetShipLength());
 	FIntPoint ShipPointDir = UMainFunctionLibrary::DirToPoint(ShipToRemove->GetShipDirection());
@@ -143,9 +143,9 @@ bool ASeaField::RemoveShip(AShip* ShipToRemove)
 		_Field[Position.X + l * ShipPointDir.X][Position.Y + l * ShipPointDir.Y]->Colorize(ECellState::CLEAR);
 
 		LeftEdge   = Position.X - 1 + l * ShipPointDir.X < 0 ? 0 : Position.X - 1 + l * ShipPointDir.X;
-		RightEdge  = Position.X + 1 + l + ShipPointDir.X >= FieldLengthX ? FieldLengthX - 1 : Position.X + 1 + l + ShipPointDir.X;
+		RightEdge  = Position.X + 1 + l * ShipPointDir.X >= FieldLengthX ? FieldLengthX - 1 : Position.X + 1 + l * ShipPointDir.X;
 		BottomEdge = Position.Y - 1 + l * ShipPointDir.Y < 0 ? 0 : Position.Y - 1 + l * ShipPointDir.Y;
-		TopEdge    = Position.Y + 1 + l + ShipPointDir.Y >= FieldLengthY ? FieldLengthY - 1 : Position.Y + 1 + l + ShipPointDir.Y;
+		TopEdge    = Position.Y + 1 + l * ShipPointDir.Y >= FieldLengthY ? FieldLengthY - 1 : Position.Y + 1 + l * ShipPointDir.Y;
 		
 		for (int32 i = LeftEdge; i <= RightEdge; ++i)
 		{
@@ -250,9 +250,22 @@ bool ASeaField::IsShipAround(int32 PointX, int32 PointY) const
 
 bool ASeaField::HasShip(AShip* ShipToCheck) const
 {
-	//return static_cast<bool>(ShipList.Find(ShipToCheck));
-
 	return static_cast<bool>(ShipMap.FindKey(ShipToCheck));
+}
+
+FVector ASeaField::GetCellLocation(int32 PositionX, int32 PositionY) const
+{
+	return _Field[PositionX][PositionY]->GetActorLocation();
+}
+
+FIntPoint ASeaField::GetShipPoint(AShip* Ship) const
+{
+	if (!HasShip(Ship))
+	{
+		UE_LOG(LogSeaField, Warning, TEXT("Ship is undefined. ( SeaField.cpp | FIntPoint ASeaField::GetShipPoint(AShip*) const )"))
+			return FIntPoint(-1, -1);
+	}
+	return *ShipMap.FindKey(Ship);
 }
 
 void ASeaField::ColorizeArea(AShip* Ship, int32 PositionX, int32 PositionY)

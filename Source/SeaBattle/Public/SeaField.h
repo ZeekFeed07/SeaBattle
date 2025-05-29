@@ -40,8 +40,15 @@ public:
 
 	bool IsShipAround(int32 PointX, int32 PointY) const;
 
+	UFUNCTION(BluePrintCallable)
 	bool HasShip(AShip* ShipToCheck) const;
 
+	UFUNCTION(BlueprintCallable)
+	FVector GetCellLocation(int32 PositionX, int32 PositionY) const;
+
+	UFUNCTION(BlueprintCallable)
+	FIntPoint GetShipPoint(AShip* Ship) const;
+	
 	UFUNCTION(BlueprintCallable)
 	void ColorizeArea(AShip* Ship, int32 PositionX, int32 PositionY);
 	UFUNCTION(BlueprintCallable)
