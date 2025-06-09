@@ -8,6 +8,8 @@
 #include "Declarations.h"
 #include "SeaCell.generated.h"
 
+class ASeaField;
+
 UENUM(BlueprintType)
 enum class ECellState : uint8
 {
@@ -30,9 +32,14 @@ public:
 	ECellState GetCellState() const;
 
 	UFUNCTION(BlueprintCallable)
+	ASeaField* GetParentField() const;
+
+	UFUNCTION(BlueprintCallable)
 	FIntPoint GetID() const;
 
 	void SetCellState(ECellState NewState);
+
+	void SetParentField(ASeaField* ParentPtr);
 
 	bool SetID(FIntPoint NewID);
 
@@ -45,6 +52,8 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	ASeaField* _ParentField = nullptr;
+
 	ECellState _State = ECellState::CLEAR;
 
 	FIntPoint _ID = FIntPoint(-1, -1);

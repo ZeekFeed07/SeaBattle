@@ -26,6 +26,11 @@ ECellState ASeaCell::GetCellState() const
 	return _State;
 }
 
+ASeaField* ASeaCell::GetParentField() const
+{
+	return _ParentField;
+}
+
 FIntPoint ASeaCell::GetID() const
 {
 	return _ID;
@@ -34,6 +39,11 @@ FIntPoint ASeaCell::GetID() const
 void ASeaCell::SetCellState(ECellState NewState)
 {
 	_State = NewState;
+}
+
+void ASeaCell::SetParentField(ASeaField* ParentPtr)
+{
+	_ParentField = ParentPtr;
 }
 
 bool ASeaCell::SetID(FIntPoint NewID)

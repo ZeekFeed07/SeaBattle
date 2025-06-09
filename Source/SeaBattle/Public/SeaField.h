@@ -34,6 +34,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual bool RemoveShip(AShip* ShipToRemove);
 
+	UFUNCTION(BlueprintCallable)
+	virtual void Shoot(int32 PositionX, int32 PositionY, bool& IsHit);
+
 	bool IsShipPlacable(AShip* ShipToPlace, int32 PositionX, int32 PositionY, EShipDirection NewDir) const;
 
 	bool IsCorrectShipPlacing(AShip* ShipToPlace, int32 PositionX, int32 PositionY) const;
@@ -47,7 +50,10 @@ public:
 	FVector GetCellLocation(int32 PositionX, int32 PositionY) const;
 
 	UFUNCTION(BlueprintCallable)
-	FIntPoint GetShipPoint(AShip* Ship) const;
+	FIntPoint GetPointByShip(AShip* Ship) const;
+
+	UFUNCTION(BlueprintCallable)
+	AShip* GetShipByPoint(int32 PositionX, int32 PositionY);
 	
 	UFUNCTION(BlueprintCallable)
 	void ColorizeArea(AShip* Ship, int32 PositionX, int32 PositionY);
@@ -74,6 +80,5 @@ private:
 	float _CellHeight	= 100.f;
 
 	TArray<TArray<ASeaCell*>> _Field = TArray<TArray<ASeaCell*>>();
-	TSet<AShip*> ShipList = TSet<AShip*>();
 	TMap<FIntPoint, AShip*> ShipMap = TMap<FIntPoint, AShip*>();
 };

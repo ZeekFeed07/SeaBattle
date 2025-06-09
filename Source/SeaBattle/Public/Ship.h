@@ -43,6 +43,9 @@ public:
 	EShipDirection GetShipDirection() const;
 
 	UFUNCTION(BlueprintCallable)
+	int32 GetNumOfDestroyedParts() const;
+
+	UFUNCTION(BlueprintCallable)
 	bool IsPlaced() const;
 
 	UFUNCTION(BlueprintCallable)
@@ -57,6 +60,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetUnplacedShip();
 
+	UFUNCTION(BlueprintCallable)
+	bool DestroyPart();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -66,10 +72,15 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDirectionChanged();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnShipDestroyed();
+
 private:
-	EShipLength _Length = EShipLength::ONE;
+	EShipLength _Length			= EShipLength::ONE;
 
-	EShipDirection _Direction = EShipDirection::TOP;
+	int32 _DestroyedParts		= 0;
 
-	bool _bPlaced = false;
+	EShipDirection _Direction	= EShipDirection::TOP;
+
+	bool _bPlaced				= false;
 };

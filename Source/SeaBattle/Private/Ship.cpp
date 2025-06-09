@@ -32,6 +32,11 @@ EShipDirection AShip::GetShipDirection() const
 	return _Direction;
 }
 
+int32 AShip::GetNumOfDestroyedParts() const
+{
+	return _DestroyedParts;
+}
+
 bool AShip::IsPlaced() const
 {
 	return _bPlaced;
@@ -57,4 +62,19 @@ void AShip::SetPlacedShip()
 void AShip::SetUnplacedShip()
 {
 	_bPlaced = false;
+}
+
+bool AShip::DestroyPart()
+{
+	if (_DestroyedParts <= 0)
+	{
+		return false;
+	}
+	else if (_DestroyedParts == 1)
+	{
+		OnShipDestroyed();
+	}
+
+	--_DestroyedParts;
+	return true;
 }

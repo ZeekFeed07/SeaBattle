@@ -50,6 +50,7 @@ void ASeaField::InitField()
 
 				FRotator SpawnRotation = FRotator(0, 0, 0);
 				_Field[i][j] = _World->SpawnActor<ASeaCell>(CellClass, SpawnPlace, SpawnRotation);
+				_Field[i][j]->SetParentField(this);
 				_Field[i][j]->SetID(FIntPoint(i, j));
 			}
 		}
@@ -94,7 +95,6 @@ bool ASeaField::AddShip(AShip* ShipToPlace, int32 PositionX, int32 PositionY, ES
 		int32 Length = UMainFunctionLibrary::ShipLengthToNum(ShipToPlace->GetShipLength());
 		FIntPoint PointDir = UMainFunctionLibrary::DirToPoint(NewDir);
 
-		//ShipList.Add(ShipToPlace);
 		ShipMap.Add(FIntPoint(PositionX, PositionY), ShipToPlace);
 
 		for (int32 l = 0; l < Length; ++l)
@@ -130,7 +130,7 @@ bool ASeaField::RemoveShip(AShip* ShipToRemove)
 		return false;
 	}
 
-	FIntPoint Position = GetShipPoint(ShipToRemove);
+	FIntPoint Position = GetPointByShip(ShipToRemove);
 
 	int32 ShipLength = UMainFunctionLibrary::ShipLengthToNum(ShipToRemove->GetShipLength());
 	FIntPoint ShipPointDir = UMainFunctionLibrary::DirToPoint(ShipToRemove->GetShipDirection());
@@ -164,6 +164,69 @@ bool ASeaField::RemoveShip(AShip* ShipToRemove)
 	ShipToRemove->SetUnplacedShip();
 
 	return true;
+}
+
+void ASeaField::Shoot(int32 PositionX, int32 PositionY, bool& IsHit)
+{
+	if (PositionX < 0 || PositionX >= FieldLengthX || PositionY < 0 || PositionY >= FieldLengthY)
+	{
+		UE_LOG(LogSeaField, Error, TEXT("Shoot position is out of field bounds. ( SeaField.cpp | void ASeaField::Shoot(int32, int32) )"))
+		IsHit = false;
+		return;
+	}
+	
+	ECellState PosState = _Field[PositionX][PositionY]->GetCellState();
+
+
+	if (PosState == ECellState::CLEAR || PosState == ECellState::DEADZONE)
+	{
+		IsHit = false;
+		_Field[PositionX][PositionY]->SetCellState(ECellState::DEADZONE);
+		_Field[PositionX][PositionY]->Colorize(ECellState::DEADZONE);
+		return;
+	}
+	else if (PosState == ECellState::SHIP)
+	{
+		AShip* AttackedShip = GetShipByPoint(PositionX, PositionY);
+		if (AttackedShip->GetNumOfDestroyedParts() > 1)
+		{
+			AttackedShip->DestroyPart();
+			IsHit = true;
+			_Field[PositionX][PositionY]->SetCellState(ECellState::SHIP);
+			_Field[PositionX][PositionY]->Colorize(ECellState::SHIP);
+			return;
+		}
+		else if (AttackedShip->GetNumOfDestroyedParts() == 1)
+		{
+			AttackedShip->DestroyPart();
+			IsHit = true;
+			_Field[PositionX][PositionY]->SetCellState(ECellState::SHIP);
+			_Field[PositionX][PositionY]->Colorize(ECellState::SHIP);
+
+			for (int32 i = PositionX - 1; i <= PositionX + 1; ++i)
+			{
+				for (int32 j = PositionY - 1; j <= PositionY + 1; ++j)
+				{
+					if (i > 0 && j > 0 && i < FieldLengthX && j < FieldLengthY && _Field[i][j]->GetCellState() == ECellState::CLEAR)
+					{
+						_Field[i][j]->SetCellState(ECellState::DEADZONE);
+						_Field[i][j]->Colorize(ECellState::DEADZONE);
+					}
+				}
+			}
+			return;
+		}
+		else
+		{
+			UE_LOG(LogSeaField, Warning, TEXT("Attacked to not avialable cell. ( SeaField.cpp | bool ASeaField::Shoot(int32, int32) )"))
+			return;
+		}
+	}
+	else
+	{ 
+		UE_LOG(LogSeaField, Warning, TEXT("Ill-conceived option of ECellState. ( SeaField.cpp | bool ASeaField::Shoot(int32, int32) )"))
+		return;
+	}
 }
 
 bool ASeaField::IsShipPlacable(AShip* ShipToPlace, int32 PositionX, int32 PositionY, EShipDirection NewDir) const
@@ -258,7 +321,7 @@ FVector ASeaField::GetCellLocation(int32 PositionX, int32 PositionY) const
 	return _Field[PositionX][PositionY]->GetActorLocation();
 }
 
-FIntPoint ASeaField::GetShipPoint(AShip* Ship) const
+FIntPoint ASeaField::GetPointByShip(AShip* Ship) const
 {
 	if (!HasShip(Ship))
 	{
@@ -266,6 +329,15 @@ FIntPoint ASeaField::GetShipPoint(AShip* Ship) const
 			return FIntPoint(-1, -1);
 	}
 	return *ShipMap.FindKey(Ship);
+}
+
+AShip* ASeaField::GetShipByPoint(int32 PositionX, int32 PositionY)
+{
+	if (PositionX >= 0 && PositionY >= 0 && PositionX < FieldLengthX && PositionY < FieldLengthY)
+	{
+		return *ShipMap.Find(FIntPoint(PositionX, PositionY));
+	}
+	return nullptr;
 }
 
 void ASeaField::ColorizeArea(AShip* Ship, int32 PositionX, int32 PositionY)
