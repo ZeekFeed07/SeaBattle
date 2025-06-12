@@ -316,6 +316,26 @@ bool ASeaField::HasShip(AShip* ShipToCheck) const
 	return static_cast<bool>(ShipMap.FindKey(ShipToCheck));
 }
 
+bool ASeaField::SetActorLocation(const FVector NewLocation)
+{
+	FVector Delta = NewLocation - GetActorLocation();
+	if (Super::SetActorLocation(NewLocation))
+	{
+
+		UE_LOG(LogSeaField, Error, TEXT("%s"), *GetActorLocation().ToString())
+		for (int32 i = 0; i < FieldLengthX; ++i)
+		{
+			for (int32 j = 0; j < FieldLengthY; ++j)
+			{
+
+				_Field[i][j]->SetActorLocation(_Field[i][j]->GetActorLocation() + Delta);
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
 FVector ASeaField::GetCellLocation(int32 PositionX, int32 PositionY) const
 {
 	return _Field[PositionX][PositionY]->GetActorLocation();

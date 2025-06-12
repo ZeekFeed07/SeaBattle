@@ -46,6 +46,11 @@ public:
 	UFUNCTION(BluePrintCallable)
 	bool HasShip(AShip* ShipToCheck) const;
 
+	/* ==================== Setters ==================== */
+
+	UFUNCTION(BlueprintCallable)
+	bool SetActorLocation(const FVector NewLocation = FVector(0.0, 0.0, 0.0));
+
 	/* ==================== Getters ==================== */
 
 	UFUNCTION(BlueprintCallable)
@@ -56,7 +61,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	AShip* GetShipByPoint(int32 PositionX, int32 PositionY);
-	
+
 	UFUNCTION(BlueprintCallable)
 	void ColorizeArea(AShip* Ship, int32 PositionX, int32 PositionY);
 	UFUNCTION(BlueprintCallable)
