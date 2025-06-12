@@ -130,7 +130,7 @@ bool ASeaField::RemoveShip(AShip* ShipToRemove)
 		return false;
 	}
 
-	FIntPoint Position = GetPointByShip(ShipToRemove);
+	FIntPoint Position = GetShipPlacedCell(ShipToRemove)->GetID();
 
 	int32 ShipLength = UMainFunctionLibrary::ShipLengthToNum(ShipToRemove->GetShipLength());
 	FIntPoint ShipPointDir = UMainFunctionLibrary::DirToPoint(ShipToRemove->GetShipDirection());
@@ -321,14 +321,17 @@ FVector ASeaField::GetCellLocation(int32 PositionX, int32 PositionY) const
 	return _Field[PositionX][PositionY]->GetActorLocation();
 }
 
-FIntPoint ASeaField::GetPointByShip(AShip* Ship) const
+ASeaCell* ASeaField::GetShipPlacedCell(AShip* Ship) const
 {
 	if (!HasShip(Ship))
 	{
 		UE_LOG(LogSeaField, Warning, TEXT("Ship is undefined. ( SeaField.cpp | FIntPoint ASeaField::GetShipPoint(AShip*) const )"))
-			return FIntPoint(-1, -1);
+		return nullptr;
 	}
-	return *ShipMap.FindKey(Ship);
+
+	FIntPoint Key = *ShipMap.FindKey(Ship);
+
+	return _Field[Key.X][Key.Y];
 }
 
 AShip* ASeaField::GetShipByPoint(int32 PositionX, int32 PositionY)

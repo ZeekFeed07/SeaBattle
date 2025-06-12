@@ -46,11 +46,13 @@ public:
 	UFUNCTION(BluePrintCallable)
 	bool HasShip(AShip* ShipToCheck) const;
 
+	/* ==================== Getters ==================== */
+
 	UFUNCTION(BlueprintCallable)
 	FVector GetCellLocation(int32 PositionX, int32 PositionY) const;
 
 	UFUNCTION(BlueprintCallable)
-	FIntPoint GetPointByShip(AShip* Ship) const;
+	ASeaCell* GetShipPlacedCell(AShip* Ship) const;
 
 	UFUNCTION(BlueprintCallable)
 	AShip* GetShipByPoint(int32 PositionX, int32 PositionY);

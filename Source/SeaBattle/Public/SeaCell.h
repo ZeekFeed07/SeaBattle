@@ -41,6 +41,7 @@ public:
 
 	void SetParentField(ASeaField* ParentPtr);
 
+	UFUNCTION(BlueprintCallable)
 	bool SetID(FIntPoint NewID);
 
 	UFUNCTION(BlueprintImplementableEvent)
