@@ -9,6 +9,7 @@
 #include "SeaCell.h"
 #include "Ship.h"
 #include "MainFunctionLibrary.h"
+#include "MainGamemode.h"
 
 #include "SeaField.generated.h"
 
@@ -35,7 +36,7 @@ public:
 	virtual bool RemoveShip(AShip* ShipToRemove);
 
 	UFUNCTION(BlueprintCallable)
-	virtual void Shoot(int32 PositionX, int32 PositionY, bool& IsHit);
+	virtual void Shoot(int32 PositionX, int32 PositionY, ECellState NewState);
 
 	bool IsShipPlacable(AShip* ShipToPlace, int32 PositionX, int32 PositionY, EShipDirection NewDir) const;
 
@@ -64,8 +65,15 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ColorizeArea(AShip* Ship, int32 PositionX, int32 PositionY);
+
+	UFUNCTION(BlueprintCallable)
+	void ColorizeCell(int32 PositionX, int32 PositionY, ECellState State);
+
 	UFUNCTION(BlueprintCallable)
 	void UncolorizeArea(AShip* Ship, int32 PositionX, int32 PositionY);
+
+	UFUNCTION(BlueprintCallable)
+	void UncolorizeCell(int32 PositionX, int32 PositionY);
 
 	UFUNCTION(BlueprintCallable)
 	void PrintFieldInLog() const;
@@ -77,8 +85,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-
 	UWorld* _World = nullptr;
+
+	AMainGamemode* GM = nullptr;
 
 	const int32 FieldLengthX = 10;
 	const int32 FieldLengthY = 10;

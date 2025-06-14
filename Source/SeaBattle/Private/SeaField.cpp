@@ -36,6 +36,9 @@ void ASeaField::InitField()
 		UE_LOG(LogSeaField, Error, TEXT("Incorrect type of CellClass. ( SeaField.cpp | ASeaField::InitField() )"))
 		return;
 	}
+
+	GM = Cast<AMainGamemode>(GetWorld()->GetAuthGameMode());
+
 	if (ResizeField(FieldLengthX, FieldLengthY))
 	{
 
@@ -166,19 +169,20 @@ bool ASeaField::RemoveShip(AShip* ShipToRemove)
 	return true;
 }
 
-void ASeaField::Shoot(int32 PositionX, int32 PositionY, bool& IsHit)
+void ASeaField::Shoot(int32 PositionX, int32 PositionY, ECellState NewState)
 {
 	if (PositionX < 0 || PositionX >= FieldLengthX || PositionY < 0 || PositionY >= FieldLengthY)
 	{
 		UE_LOG(LogSeaField, Error, TEXT("Shoot position is out of field bounds. ( SeaField.cpp | void ASeaField::Shoot(int32, int32) )"))
-		IsHit = false;
 		return;
 	}
+
+	_Field[PositionX][PositionY]->SetCellState(NewState);
+	_Field[PositionX][PositionY]->Colorize(NewState);
 	
-	ECellState PosState = _Field[PositionX][PositionY]->GetCellState();
+	//ECellState PosState = _Field[PositionX][PositionY]->GetCellState();
 
-
-	if (PosState == ECellState::CLEAR || PosState == ECellState::DEADZONE)
+	/*if (PosState == ECellState::CLEAR || PosState == ECellState::DEADZONE)
 	{
 		IsHit = false;
 		_Field[PositionX][PositionY]->SetCellState(ECellState::DEADZONE);
@@ -226,7 +230,7 @@ void ASeaField::Shoot(int32 PositionX, int32 PositionY, bool& IsHit)
 	{ 
 		UE_LOG(LogSeaField, Warning, TEXT("Ill-conceived option of ECellState. ( SeaField.cpp | bool ASeaField::Shoot(int32, int32) )"))
 		return;
-	}
+	}*/
 }
 
 bool ASeaField::IsShipPlacable(AShip* ShipToPlace, int32 PositionX, int32 PositionY, EShipDirection NewDir) const
@@ -406,6 +410,17 @@ void ASeaField::ColorizeArea(AShip* Ship, int32 PositionX, int32 PositionY)
 	}
 }
 
+void ASeaField::ColorizeCell(int32 PositionX, int32 PositionY, ECellState State)
+{
+	if (PositionX >= 0 && PositionY >= 0 && PositionX < FieldLengthX && PositionY < FieldLengthY)
+	{
+		if (_Field[PositionX][PositionY]->GetCellState() != ECellState::SHIP)
+		{
+		_Field[PositionX][PositionY]->Colorize(State);
+		}
+	}
+}
+
 void ASeaField::UncolorizeArea(AShip* Ship, int32 PositionX, int32 PositionY)
 {
 	if (!IsCorrectShipPlacing(Ship, PositionX, PositionY)) return;
@@ -429,6 +444,17 @@ void ASeaField::UncolorizeArea(AShip* Ship, int32 PositionX, int32 PositionY)
 					}
 				}
 			}
+		}
+	}
+}
+
+void ASeaField::UncolorizeCell(int32 PositionX, int32 PositionY)
+{
+	if (PositionX >= 0 && PositionY >= 0 && PositionX < FieldLengthX && PositionY < FieldLengthY)
+	{
+		if (_Field[PositionX][PositionY]->GetCellState() == ECellState::CLEAR)
+		{
+			_Field[PositionX][PositionY]->Colorize(ECellState::CLEAR);
 		}
 	}
 }

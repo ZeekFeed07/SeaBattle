@@ -10,14 +10,6 @@
 
 class ASeaField;
 
-UENUM(BlueprintType)
-enum class ECellState : uint8
-{
-	CLEAR,
-	SHIP,
-	DEADZONE
-};
-
 UCLASS()
 class SEABATTLE_API ASeaCell : public AActor
 {
